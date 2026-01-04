@@ -1,722 +1,497 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Green Network - Protect Earth</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>凯撒密码工具 | 加密解密+字母频率分析</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        :root {
-            --primary: #2e7d32;
-            --secondary: #4caf50;
-            --accent: #8bc34a;
-            --light: #e8f5e9;
-            --dark: #1b5e20;
-            --text: #333333;
-            --white: #ffffff;
+            font-family: "Consolas", "Microsoft YaHei", sans-serif;
         }
 
         body {
-            background-color: var(--light);
-            color: var(--text);
+            background-color: #f5f7fa;
+            color: #2d3748;
+            padding: 30px;
             line-height: 1.6;
         }
 
-        header {
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            color: var(--white);
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
         .container {
-            width: 90%;
-            max-width: 1200px;
+            width: 1000px;
             margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
         }
 
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.8rem;
+        h1 {
+            text-align: center;
+            color: #2b6cb0;
+            margin-bottom: 40px;
+            font-size: 30px;
             font-weight: 700;
         }
 
-        .logo i {
-            font-size: 2rem;
-        }
-
-        nav ul {
+        .tab-container {
             display: flex;
-            list-style: none;
+            border-bottom: 2px solid #e2e8f0;
+            margin-bottom: 30px;
         }
 
-        nav ul li {
-            margin-left: 2rem;
-        }
-
-        nav ul li a {
-            color: var(--white);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            padding: 0.5rem 0;
-            position: relative;
-        }
-
-        nav ul li a:hover {
-            color: var(--accent);
-        }
-
-        nav ul li a::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: var(--accent);
-            transition: width 0.3s ease;
-        }
-
-        nav ul li a:hover::after {
-            width: 100%;
-        }
-
-        .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2073&q=80');
-            background-size: cover;
-            background-position: center;
-            height: 80vh;
-            display: flex;
-            align-items: center;
-            text-align: center;
-            color: var(--white);
-        }
-
-        .hero-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        .hero p {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-        }
-
-        .btn {
-            display: inline-block;
-            background-color: var(--accent);
-            color: var(--white);
-            padding: 0.8rem 2rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
+        .tab-btn {
+            padding: 12px 30px;
             border: none;
+            background: transparent;
+            color: #718096;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn:hover {
-            background-color: var(--primary);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        section {
-            padding: 5rem 0;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .section-title h2 {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
+            font-size: 18px;
             position: relative;
-            display: inline-block;
+            transition: color 0.2s;
         }
 
-        .section-title h2::after {
+        .tab-btn:hover {
+            color: #2b6cb0;
+        }
+
+        .tab-btn.active {
+            color: #2b6cb0;
+            font-weight: 600;
+        }
+
+        .tab-btn.active::after {
             content: '';
             position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background-color: var(--accent);
-            border-radius: 2px;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #2b6cb0;
         }
 
-        .section-title p {
-            color: var(--text);
-            max-width: 700px;
-            margin: 0 auto;
+        .tab-content {
+            display: none;
         }
 
-        .about-content {
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 凯撒密码模块样式 */
+        .caesar-box {
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 16px;
+        }
+
+        input[type="number"] {
+            width: 120px;
+            padding: 10px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        input[type="number"]:focus {
+            border-color: #2b6cb0;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            resize: vertical;
+            font-size: 16px;
+            margin-bottom: 15px;
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: #2b6cb0;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 25px;
+            background-color: #2b6cb0;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #2c5282;
+        }
+
+        button.secondary {
+            background-color: #718096;
+        }
+
+        button.secondary:hover {
+            background-color: #4a5568;
+        }
+
+        /* 频率分析模块样式 */
+        .frequency-box {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            align-items: center;
+            gap: 30px;
         }
 
-        .about-img {
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        .single-letter, .double-letter {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
         }
 
-        .about-img img {
-            width: 100%;
-            height: auto;
-            display: block;
-            transition: transform 0.5s ease;
-        }
-
-        .about-img:hover img {
-            transform: scale(1.05);
-        }
-
-        .about-text h3 {
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-            color: var(--dark);
-        }
-
-        .about-text p {
-            margin-bottom: 1.5rem;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 2rem 1rem;
-            background-color: var(--white);
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease;
-        }
-
-        .stat-item:hover {
-            transform: translateY(-10px);
-        }
-
-        .stat-item i {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 1rem;
-        }
-
-        .stat-item h3 {
-            font-size: 2.5rem;
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-item p {
-            color: var(--text);
-        }
-
-        .initiatives {
-            background-color: var(--white);
-        }
-
-        .initiatives-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-        }
-
-        .initiative-card {
-            background-color: var(--light);
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease;
-        }
-
-        .initiative-card:hover {
-            transform: translateY(-10px);
-        }
-
-        .initiative-img {
-            height: 200px;
-            overflow: hidden;
-        }
-
-        .initiative-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .initiative-card:hover .initiative-img img {
-            transform: scale(1.1);
-        }
-
-        .initiative-content {
-            padding: 1.5rem;
-        }
-
-        .initiative-content h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--dark);
-        }
-
-        .initiative-content p {
-            margin-bottom: 1.5rem;
-        }
-
-        .cta {
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            color: var(--white);
-            text-align: center;
-            padding: 5rem 0;
-        }
-
-        .cta h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .cta p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .cta .btn {
-            background-color: var(--white);
-            color: var(--primary);
-        }
-
-        .cta .btn:hover {
-            background-color: var(--accent);
-            color: var(--white);
-        }
-
-        footer {
-            background-color: var(--dark);
-            color: var(--white);
-            padding: 3rem 0 1rem;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-column h3 {
-            font-size: 1.3rem;
-            margin-bottom: 1.5rem;
-            position: relative;
+        .frequency-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2b6cb0;
+            border-bottom: 1px solid #e2e8f0;
             padding-bottom: 10px;
         }
 
-        .footer-column h3::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 40px;
-            height: 2px;
-            background-color: var(--accent);
+        .frequency-list {
+            max-height: 400px;
+            overflow-y: auto;
         }
 
-        .footer-column p {
-            margin-bottom: 1rem;
-        }
-
-        .footer-links {
-            list-style: none;
-        }
-
-        .footer-links li {
-            margin-bottom: 0.8rem;
-        }
-
-        .footer-links li a {
-            color: var(--light);
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .footer-links li a:hover {
-            color: var(--accent);
-            padding-left: 5px;
-        }
-
-        .social-links {
+        .frequency-item {
             display: flex;
-            gap: 1rem;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #e2e8f0;
+            font-size: 15px;
         }
 
-        .social-links a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            color: var(--white);
-            text-decoration: none;
-            transition: all 0.3s ease;
+        .frequency-item:last-child {
+            border-bottom: none;
         }
 
-        .social-links a:hover {
-            background-color: var(--accent);
-            transform: translateY(-5px);
+        .item-label {
+            font-weight: 600;
+            color: #2d3748;
         }
 
-        .copyright {
-            text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        .item-value {
+            color: #e53e3e;
+            font-weight: 600;
         }
 
-        .mobile-menu {
-            display: none;
-            font-size: 1.5rem;
-            cursor: pointer;
+        .standard-label {
+            color: #38a169;
+            margin-left: 10px;
+            font-weight: normal;
         }
 
-        @media (max-width: 992px) {
-            .about-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .initiatives-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .footer-content {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        /* 滚动条样式优化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
         }
 
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .hero p {
-                font-size: 1.1rem;
-            }
-            
-            nav ul {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background-color: var(--primary);
-                flex-direction: column;
-                padding: 1rem 0;
-                text-align: center;
-                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-            }
-            
-            nav ul.active {
-                display: flex;
-            }
-            
-            nav ul li {
-                margin: 0;
-                padding: 0.8rem 0;
-            }
-            
-            .mobile-menu {
-                display: block;
-            }
-            
-            .initiatives-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .footer-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .stats {
-                grid-template-columns: 1fr;
-            }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
         }
 
-        /* Animation for stats counter */
-        .counter {
-            transition: all 0.5s ease;
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0;
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <div class="container nav-container">
-            <div class="logo">
-                <i class="fas fa-seedling"></i>
-                <span>Green Network</span>
-            </div>
-            <nav>
-                <div class="mobile-menu">
-                    <i class="fas fa-bars"></i>
-                </div>
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#initiatives">Initiatives</a></li>
-                    <li><a href="#get-involved">Get Involved</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
+    <div class="container">
+        <h1>凯撒密码工具 | 加密解密 + 字母频率分析</h1>
 
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="container hero-content">
-            <h1>Protect Our Planet, Preserve Our Future</h1>
-            <p>Join the global movement to create a sustainable world through conservation, education, and community action.</p>
-            <a href="#get-involved" class="btn">Join Our Network</a>
+        <!-- 标签页切换 -->
+        <div class="tab-container">
+            <button class="tab-btn active" data-tab="caesar">凯撒密码</button>
+            <button class="tab-btn" data-tab="frequency">频率分析</button>
         </div>
-    </section>
 
-    <!-- About Section -->
-    <section id="about">
-        <div class="container">
-            <div class="section-title">
-                <h2>About Green Network</h2>
-                <p>We are a global community dedicated to environmental protection and sustainable development.</p>
-            </div>
-            <div class="about-content">
-                <div class="about-img">
-                    <img src="https://images.unsplash.com/photo-1507591064344-4c6ce005b128?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Team planting trees">
+        <!-- 凯撒密码标签页 -->
+        <div class="tab-content active" id="caesar">
+            <div class="caesar-box">
+                <div class="form-group">
+                    <label>偏移量（1-25）：</label>
+                    <input type="number" id="offset" min="1" max="25" value="3">
                 </div>
-                <div class="about-text">
-                    <h3>Our Mission</h3>
-                    <p>Green Network is committed to creating a sustainable future by protecting natural ecosystems, promoting renewable energy, and empowering communities to take environmental action.</p>
-                    <p>Founded in 2010, we've grown from a small grassroots organization to an international network with over 50,000 members across 120 countries.</p>
-                    <p>Our approach combines scientific research, community engagement, and policy advocacy to address the most pressing environmental challenges of our time.</p>
-                    <a href="#" class="btn">Learn More</a>
-                </div>
-            </div>
-            <div class="stats">
-                <div class="stat-item">
-                    <i class="fas fa-tree"></i>
-                    <h3 class="counter" data-target="2500000">0</h3>
-                    <p>Trees Planted</p>
-                </div>
-                <div class="stat-item">
-                    <i class="fas fa-users"></i>
-                    <h3 class="counter" data-target="50000">0</h3>
-                    <p>Active Members</p>
-                </div>
-                <div class="stat-item">
-                    <i class="fas fa-globe-americas"></i>
-                    <h3 class="counter" data-target="120">0</h3>
-                    <p>Countries Reached</p>
-                </div>
-                <div class="stat-item">
-                    <i class="fas fa-recycle"></i>
-                    <h3 class="counter" data-target="1500">0</h3>
-                    <p>Cleanup Projects</p>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Initiatives Section -->
-    <section class="initiatives" id="initiatives">
-        <div class="container">
-            <div class="section-title">
-                <h2>Our Initiatives</h2>
-                <p>Discover the key programs and projects we're implementing to protect our planet.</p>
-            </div>
-            <div class="initiatives-grid">
-                <div class="initiative-card">
-                    <div class="initiative-img">
-                        <img src="https://dialogue.earth/content/uploads/2021/04/lessons-from-the-rush-to-reforest-china-dialogue-2400x1599.jpg" alt="Reforestation">
-                    </div>
-                    <div class="initiative-content">
-                        <h3>Global Reforestation</h3>
-                        <p>Planting millions of trees worldwide to restore ecosystems, combat climate change, and protect biodiversity.</p>
-                        <a href="#" class="btn">Learn More</a>
-                    </div>
+                <div class="form-group">
+                    <label>输入文本（仅处理英文字母，其他字符不变）：</label>
+                    <textarea id="caesarInput" placeholder="请输入需要加密/解密的英文文本...">Hello World!</textarea>
                 </div>
-                <div class="initiative-card">
-                    <div class="initiative-img">
-                        <img src="https://images.unsplash.com/photo-1621451537084-482c73073a0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80" alt="Ocean Conservation">
-                    </div>
-                    <div class="initiative-content">
-                        <h3>Ocean Conservation</h3>
-                        <p>Protecting marine ecosystems, reducing plastic pollution, and promoting sustainable fishing practices.</p>
-                        <a href="#" class="btn">Learn More</a>
-                    </div>
-                </div>
-                <div class="initiative-card">
-                    <div class="initiative-img">
-                        <img src="https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80" alt="Renewable Energy">
-                    </div>
-                    <div class="initiative-content">
-                        <h3>Renewable Energy</h3>
-                        <p>Promoting solar, wind, and other clean energy sources to reduce dependence on fossil fuels.</p>
-                        <a href="#" class="btn">Learn More</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- CTA Section -->
-    <section class="cta" id="get-involved">
-        <div class="container">
-            <h2>Join Our Global Movement</h2>
-            <p>Together, we can create a sustainable future for generations to come. Every action counts, no matter how small.</p>
-            <a href="#" class="btn">Become a Member</a>
-        </div>
-    </section>
+                <div class="btn-group">
+                    <button id="encryptBtn">加密</button>
+                    <button id="decryptBtn">解密</button>
+                    <button id="clearCaesarBtn" class="secondary">清空</button>
+                    <button id="copyCaesarBtn" class="secondary">复制结果</button>
+                </div>
 
-    <!-- Footer -->
-    <footer id="contact">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-column">
-                    <h3>Green Network</h3>
-                    <p>We are dedicated to protecting our planet through collaborative action, education, and sustainable solutions.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    </div>
+                <div class="form-group">
+                    <label>结果：</label>
+                    <textarea id="caesarOutput" readonly placeholder="加密/解密结果将显示在这里..."></textarea>
                 </div>
-                <div class="footer-column">
-                    <h3>Quick Links</h3>
-                    <ul class="footer-links">
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#about">About Us</a></li>
-                        <li><a href="#initiatives">Initiatives</a></li>
-                        <li><a href="#get-involved">Get Involved</a></li>
-                        <li><a href="#contact">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Our Programs</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Reforestation</a></li>
-                        <li><a href="#">Ocean Cleanup</a></li>
-                        <li><a href="#">Wildlife Protection</a></li>
-                        <li><a href="#">Climate Education</a></li>
-                        <li><a href="#">Sustainable Agriculture</a></li>
-                    </ul>
-                </div>
-                <div class="footer-column">
-                    <h3>Contact Us</h3>
-                    <p><i class="fas fa-map-marker-alt"></i> Copper Creek Drive, New York</p>
-                    <p><i class="fas fa-phone"></i> +1 (312) 171-0771</p>
-                    <p><i class="fas fa-envelope"></i> support@greennetwork.org</p>
-                </div>
-            </div>
-            <div class="copyright">
-                <p>&copy; 2025 Green Network. All rights reserved.</p>
             </div>
         </div>
-    </footer>
+
+        <!-- 频率分析标签页 -->
+        <div class="tab-content" id="frequency">
+            <div class="form-group">
+                <label>输入需要分析的英文文本：</label>
+                <textarea id="frequencyInput" placeholder="请输入英文文本，将自动分析单字母和双字母频率...">The quick brown fox jumps over the lazy dog. This is a sample text for frequency analysis.</textarea>
+                <button id="analyzeBtn" style="margin-top: 10px;">开始分析</button>
+            </div>
+
+            <div class="frequency-box">
+                <!-- 单字母频率 -->
+                <div class="single-letter">
+                    <div class="frequency-title">单字母频率（%）| 标准英语频率（%）</div>
+                    <div class="frequency-list" id="singleLetterList"></div>
+                </div>
+
+                <!-- 双字母频率 -->
+                <div class="double-letter">
+                    <div class="frequency-title">双字母频率（%）| 标准英语高频双字母（参考）</div>
+                    <div class="frequency-list" id="doubleLetterList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Mobile Menu Toggle
-        document.querySelector('.mobile-menu').addEventListener('click', function() {
-            document.querySelector('nav ul').classList.toggle('active');
+        // 1. 标签页切换逻辑
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 移除所有激活状态
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // 激活当前标签
+                btn.classList.add('active');
+                const tabId = btn.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
         });
 
-        // Counter Animation
-        function animateCounters() {
-            const counters = document.querySelectorAll('.counter');
-            const speed = 200; // The lower the slower
-            
-            counters.forEach(counter => {
-                const target = +counter.getAttribute('data-target');
-                const count = +counter.innerText;
-                
-                const inc = target / speed;
-                
-                if(count < target) {
-                    counter.innerText = Math.ceil(count + inc);
-                    setTimeout(animateCounters, 1);
-                } else {
-                    counter.innerText = target;
+        // 2. 凯撒密码核心逻辑
+        // 加密函数
+        function caesarEncrypt(text, offset) {
+            return text.split('').map(char => {
+                // 处理大写字母
+                if (char >= 'A' && char <= 'Z') {
+                    return String.fromCharCode((char.charCodeAt(0) - 65 + offset) % 26 + 65);
                 }
-            });
+                // 处理小写字母
+                else if (char >= 'a' && char <= 'z') {
+                    return String.fromCharCode((char.charCodeAt(0) - 97 + offset) % 26 + 97);
+                }
+                // 其他字符不变
+                else {
+                    return char;
+                }
+            }).join('');
         }
 
-        // Initialize counters when page loads
-        window.addEventListener('load', animateCounters);
+        // 解密函数（偏移量取反）
+        function caesarDecrypt(text, offset) {
+            return caesarEncrypt(text, 26 - (offset % 26));
+        }
 
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                if(targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if(targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
-                    
-                    document.querySelector('nav ul').classList.remove('active');
-                }
-            });
+        // 加密按钮点击
+        document.getElementById('encryptBtn').addEventListener('click', () => {
+            const input = document.getElementById('caesarInput').value;
+            const offset = parseInt(document.getElementById('offset').value) || 3;
+            const result = caesarEncrypt(input, offset);
+            document.getElementById('caesarOutput').value = result;
         });
+
+        // 解密按钮点击
+        document.getElementById('decryptBtn').addEventListener('click', () => {
+            const input = document.getElementById('caesarInput').value;
+            const offset = parseInt(document.getElementById('offset').value) || 3;
+            const result = caesarDecrypt(input, offset);
+            document.getElementById('caesarOutput').value = result;
+        });
+
+        // 清空按钮
+        document.getElementById('clearCaesarBtn').addEventListener('click', () => {
+            document.getElementById('caesarInput').value = '';
+            document.getElementById('caesarOutput').value = '';
+        });
+
+        // 复制结果按钮
+        document.getElementById('copyCaesarBtn').addEventListener('click', async () => {
+            const output = document.getElementById('caesarOutput').value;
+            if (!output) {
+                alert('暂无结果可复制！');
+                return;
+            }
+            try {
+                await navigator.clipboard.writeText(output);
+                alert('结果复制成功！');
+            } catch (err) {
+                alert('复制失败，请手动复制！');
+                console.error(err);
+            }
+        });
+
+        // 3. 频率分析核心逻辑
+        // 标准英语单字母频率（%）
+        const standardSingleFreq = {
+            'A': 8.167, 'B': 1.492, 'C': 2.782, 'D': 4.253, 'E': 12.702,
+            'F': 2.228, 'G': 2.015, 'H': 6.094, 'I': 6.966, 'J': 0.153,
+            'K': 0.772, 'L': 4.025, 'M': 2.406, 'N': 6.749, 'O': 7.507,
+            'P': 1.929, 'Q': 0.095, 'R': 5.987, 'S': 6.327, 'T': 9.056,
+            'U': 2.758, 'V': 0.978, 'W': 2.360, 'X': 0.150, 'Y': 1.974,
+            'Z': 0.074
+        };
+
+        // 标准英语高频双字母（参考）
+        const standardDoubleFreq = [
+            'TH', 'HE', 'IN', 'ER', 'AN', 'RE', 'ED', 'ON', 'ES', 'ST',
+            'EN', 'AT', 'TO', 'NT', 'HA', 'ND', 'OU', 'EA', 'NG', 'AS'
+        ];
+
+        // 频率分析函数
+        function analyzeFrequency(text) {
+            // 预处理：转为大写，仅保留字母
+            const cleanText = text.replace(/[^A-Za-z]/g, '').toUpperCase();
+            const totalChars = cleanText.length;
+            
+            if (totalChars === 0) {
+                alert('请输入有效的英文文本（至少包含一个字母）！');
+                return { single: {}, double: {} };
+            }
+
+            // 单字母频率统计
+            const singleCount = {};
+            for (let char of cleanText) {
+                singleCount[char] = (singleCount[char] || 0) + 1;
+            }
+
+            // 计算单字母频率（%）并排序
+            const singleFreq = {};
+            for (let char of 'ABCDEFGHIJKLMNOPQRSTUVWXYZ') {
+                const count = singleCount[char] || 0;
+                singleFreq[char] = ((count / totalChars) * 100).toFixed(3);
+            }
+            const sortedSingle = Object.entries(singleFreq)
+                .sort((a, b) => b[1] - a[1]);
+
+            // 双字母频率统计
+            const doubleCount = {};
+            for (let i = 0; i < cleanText.length - 1; i++) {
+                const pair = cleanText[i] + cleanText[i + 1];
+                doubleCount[pair] = (doubleCount[pair] || 0) + 1;
+            }
+            const totalPairs = cleanText.length - 1;
+            
+            // 计算双字母频率（%）并排序
+            const doubleFreq = {};
+            for (let pair in doubleCount) {
+                doubleFreq[pair] = ((doubleCount[pair] / totalPairs) * 100).toFixed(3);
+            }
+            const sortedDouble = Object.entries(doubleFreq)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 20); // 只显示前20个高频双字母
+
+            return { single: sortedSingle, double: sortedDouble };
+        }
+
+        // 分析按钮点击
+        document.getElementById('analyzeBtn').addEventListener('click', () => {
+            const input = document.getElementById('frequencyInput').value;
+            const result = analyzeFrequency(input);
+
+            // 渲染单字母频率
+            const singleList = document.getElementById('singleLetterList');
+            singleList.innerHTML = '';
+            result.single.forEach(([char, freq]) => {
+                const standardFreq = standardSingleFreq[char].toFixed(3);
+                const item = document.createElement('div');
+                item.className = 'frequency-item';
+                item.innerHTML = `
+                    <span class="item-label">${char}</span>
+                    <span class="item-value">${freq} 
+                        <span class="standard-label">（标准：${standardFreq}）</span>
+                    </span>
+                `;
+                singleList.appendChild(item);
+            });
+
+            // 渲染双字母频率
+            const doubleList = document.getElementById('doubleLetterList');
+            doubleList.innerHTML = '';
+            result.double.forEach(([pair, freq]) => {
+                // 标记是否为标准高频双字母
+                const isStandard = standardDoubleFreq.includes(pair) ? '(标准高频)' : '';
+                const item = document.createElement('div');
+                item.className = 'frequency-item';
+                item.innerHTML = `
+                    <span class="item-label">${pair}</span>
+                    <span class="item-value">${freq} 
+                        <span class="standard-label">${isStandard}</span>
+                    </span>
+                `;
+                doubleList.appendChild(item);
+            });
+
+            // 补充标准双字母说明（如果分析结果不足20个）
+            if (result.double.length < 20) {
+                const remaining = 20 - result.double.length;
+                standardDoubleFreq.slice(result.double.length, result.double.length + remaining).forEach(pair => {
+                    const item = document.createElement('div');
+                    item.className = 'frequency-item';
+                    item.innerHTML = `
+                        <span class="item-label">${pair}</span>
+                        <span class="item-value">- 
+                            <span class="standard-label">（标准高频，文本中未出现）</span>
+                        </span>
+                    `;
+                    doubleList.appendChild(item);
+                });
+            }
+        });
+
+        // 初始化频率分析（默认文本）
+        document.getElementById('analyzeBtn').click();
     </script>
 </body>
-
 </html>
